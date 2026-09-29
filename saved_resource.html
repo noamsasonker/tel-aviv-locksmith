@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<!-- saved from url=(0229)https://preview-%2Dtlv-lock-hero.base44.app/?hide_badge=true&base44_data_env=prod&server_url=https%3A%2F%2Fpreview-%2Dtlv-lock-hero.base44.app&_b44_commit=122e86759356d753ade42954024f0a1e7d93bf00&_b44_reload=1&previewFE_version=1 -->
+<html lang="he" dir="rtl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+    (function() {
+        var buffer = window.__base44_preview_native_failures;
+        if (!buffer || buffer.version !== 1 || !Array.isArray(buffer.entries)) {
+            buffer = { version: 1, entries: [], listenersInstalled: false };
+            window.__base44_preview_native_failures = buffer;
+        }
+        if (buffer.listenersInstalled) return;
+        function value(object, key) {
+            return object && typeof object[key] === 'string' ? object[key] : '';
+        }
+        function append(message) {
+            if (!message) return;
+            var normalizedMessage = String(message).slice(0, 5000);
+            for (var index = buffer.entries.length - 1; index >= 0; index--) {
+                var existing = buffer.entries[index];
+                if (existing && existing.level === 'error' && existing.message === normalizedMessage) {
+                    buffer.entries.splice(index, 1);
+                }
+            }
+            buffer.entries.push({
+                level: 'error',
+                message: normalizedMessage,
+                timestamp: Date.now()
+            });
+            if (buffer.entries.length > 100) {
+                buffer.entries.splice(0, buffer.entries.length - 100);
+            }
+        }
+        buffer.append = append;
+        function handleError(event) {
+            var target = event && event.target;
+            var tagName = value(target, 'tagName').toLowerCase() || 'window';
+            var isModule = tagName === 'script' && value(target, 'type').toLowerCase() === 'module';
+            var resourceType = isModule ? 'module' : tagName;
+            var url = value(target, 'src') || value(target, 'href') || value(event, 'filename');
+            var detail = value(event, 'message') || value(event && event.error, 'message');
+            var prefix = tagName === 'window' ? 'Native browser error' : 'Failed to load ' + resourceType;
+            append(prefix + (url ? ' ' + url : '') + (detail ? ': ' + detail : ''));
+        }
+        function rejectionReason(reason) {
+            if (typeof reason === 'string') return reason;
+            var message = value(reason, 'message');
+            if (message) return message;
+            try { return JSON.stringify(reason) || String(reason); }
+            catch (e) { return String(reason); }
+        }
+        function handleRejection(event) {
+            append('Unhandled promise rejection: ' + rejectionReason(event && event.reason));
+        }
+        function handleCspViolation(event) {
+            var blockedUri = value(event, 'blockedURI') || 'resource';
+            var directive = value(event, 'violatedDirective');
+            append('Content Security Policy blocked ' + blockedUri + (directive ? ' (' + directive + ')' : ''));
+        }
+        function overlayText(root, selector) {
+            var element = root && root.querySelector(selector);
+            return value(element, 'textContent').trim();
+        }
+        function captureViteOverlay(overlay) {
+            var root = overlay && overlay.shadowRoot;
+            var message = overlayText(root, '.message-body');
+            if (!message) return;
+            var plugin = overlayText(root, '.plugin');
+            var details = ['Vite build error: ' + (plugin ? plugin + ' ' : '') + message];
+            var file = overlayText(root, '.file');
+            var frame = overlayText(root, '.frame');
+            var stack = overlayText(root, '.stack');
+            if (file) details.push('File: ' + file);
+            if (frame) details.push(frame);
+            if (stack) details.push(stack);
+            append(details.join(String.fromCharCode(10)));
+        }
+        function captureViteOverlays(node) {
+            if (!node || node.nodeType !== 1) return;
+            if (node.matches && node.matches('vite-error-overlay')) captureViteOverlay(node);
+            if (!node.querySelectorAll) return;
+            var overlays = node.querySelectorAll('vite-error-overlay');
+            for (var index = 0; index < overlays.length; index++) captureViteOverlay(overlays[index]);
+        }
+        window.addEventListener('error', handleError, true);
+        window.addEventListener('unhandledrejection', handleRejection);
+        window.addEventListener('securitypolicyviolation', handleCspViolation);
+        if (typeof MutationObserver !== 'undefined' && document.documentElement) {
+            captureViteOverlays(document.documentElement);
+            new MutationObserver(function(records) {
+                for (var recordIndex = 0; recordIndex < records.length; recordIndex++) {
+                    var nodes = records[recordIndex].addedNodes;
+                    for (var nodeIndex = 0; nodeIndex < nodes.length; nodeIndex++) {
+                        captureViteOverlays(nodes[nodeIndex]);
+                    }
+                }
+            }).observe(document.documentElement, { childList: true, subtree: true });
+        }
+        buffer.listenersInstalled = true;
+    })();
+    </script>
+    <script data-preview-data-env-pin="true">
+    (function() {
+        var KEY = 'base44_data_env';
+        var APP_API_PATH = "/api/apps/6ab97028773b74bb6cc7f75d/";
+        var STORAGE_KEY = KEY + ':' + APP_API_PATH;
+        var API_ORIGINS = ["https://app.base44.com", "https://base44.app"].map(function(u) { return new URL(u).origin; });
+        var REQUEST_INIT_KEYS = [
+            'method', 'headers', 'credentials', 'mode', 'cache', 'redirect',
+            'referrer', 'referrerPolicy', 'integrity', 'keepalive', 'signal', 'priority',
+        ];
+        var env = new URLSearchParams(window.location.search).get(KEY);
+        try {
+            if (env === 'dev' || env === 'prod') sessionStorage.setItem(STORAGE_KEY, env);
+            else env = sessionStorage.getItem(STORAGE_KEY);
+        } catch (e) {}
+        if (env !== 'dev' && env !== 'prod') return;
+        function pin(url) {
+            try {
+                var u = new URL(url, window.location.href);
+                if (u.origin !== window.location.origin && API_ORIGINS.indexOf(u.origin) === -1) return url;
+                if (!u.pathname.startsWith(APP_API_PATH)) return url;
+                // Privileged function/agent routes trust this app's Preview host,
+                // not a dev parameter sent to the generic SDK API origin.
+                if (u.origin !== window.location.origin && (
+                    u.pathname.startsWith(APP_API_PATH + 'functions/') ||
+                    u.pathname.startsWith(APP_API_PATH + 'agents/')
+                )) {
+                    u = new URL(u.pathname + u.search + u.hash, window.location.origin);
+                }
+                u.searchParams.set(KEY, env);
+                return u.toString();
+            } catch (e) { return url; }
+        }
+        var origFetch = window.fetch;
+        window.fetch = function(input, init) {
+            if (typeof input === 'string' || input instanceof URL) {
+                return origFetch.call(this, pin(String(input)), init);
+            }
+            if (!input || !input.url) return origFetch.call(this, input, init);
+            var pinned = pin(input.url);
+            if (pinned === input.url) return origFetch.call(this, input, init);
+            try {
+                input = new Request(input, init);
+                if (!input.keepalive || !input.body) {
+                    return origFetch.call(this, new Request(pinned, input));
+                }
+                // RequestInit exposes an existing body as a stream, which Fetch
+                // forbids with keepalive. Buffer only that case, after init overrides.
+                var self = this;
+                return input.blob().then(function(body) {
+                    var rebuilt = { body: body };
+                    REQUEST_INIT_KEYS.forEach(function(key) {
+                        if (input[key] !== undefined) rebuilt[key] = input[key];
+                    });
+                    return origFetch.call(self, new Request(pinned, rebuilt));
+                });
+            } catch (error) { return Promise.reject(error); }
+        };
+        var origOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url) {
+            arguments[1] = pin(String(url));
+            return origOpen.apply(this, arguments);
+        };
+    })();
+    </script><script defer="" data-preview-inject="true" data-app-id="6ab97028773b74bb6cc7f75d" data-preview-type="latest_preview" data-rum-app-id="db50c921-10c3-4f12-bccb-950fa174b708" data-rum-client-token="pubfe8a4f2972b412b4556fd67e77f82cb4" data-dd-site="datadoghq.com" src="./builder-bridge.js.הורדה"></script>
+    <script>
+    (function() {
+        var IGNORE = { SCRIPT: 1, STYLE: 1, LINK: 1, META: 1, NOSCRIPT: 1, TEMPLATE: 1 };
+        const fire = () => window.parent.postMessage({ type: 'IFRAME_CONTENT_READY' }, '*');
+        function check() {
+            var body = document.body;
+            if (!body) return false;
+            for (var idx = 0; idx < body.children.length; idx++) {
+                if (!IGNORE[body.children[idx].tagName]) return true;
+            }
+            return false;
+        }
+        function start() {
+            if (check()) { fire(); return; }
+            var observer = new MutationObserver(function() {
+                if (check()) { fire(); observer.disconnect(); }
+            });
+            observer.observe(document.documentElement, { childList: true, subtree: true });
+        }
+        if (document.body) { start(); }
+        else { document.addEventListener('DOMContentLoaded', start, { once: true }); }
+    })();
+    </script>
+    <script>
+    (function() {
+        if (window.self === window.top) return;
+        var APP_ID = "6ab97028773b74bb6cc7f75d";
+        var PREVIEW_TYPE = "latest_preview";
+        var on404 = false;
+        var booted = false;
+        function detect() { return !!document.querySelector('[data-source-location^="PageNotFound:"]'); }
+        function payload() { return { app_id: APP_ID, preview_type: PREVIEW_TYPE, url_path: window.location.pathname }; }
+        function tick() {
+            var now = detect();
+            if (now && !on404) {
+                on404 = true;
+                window.parent.postMessage({ type: 'PREVIEW_PAGE_NOT_FOUND', payload: payload() }, '*');
+            } else if (!now && (on404 || !booted)) {
+                // On first tick of a fresh document, emit a cleared signal even when
+                // not currently on a 404 — the parent may have latched is404=true from
+                // a previous document at the same URL (e.g. after an iframe reload).
+                on404 = false;
+                window.parent.postMessage({ type: 'PREVIEW_PAGE_NOT_FOUND_CLEARED', payload: payload() }, '*');
+            }
+            booted = true;
+        }
+        function start() {
+            tick();
+            new MutationObserver(tick).observe(document.body, { childList: true, subtree: true });
+        }
+        if (document.body) { start(); }
+        else { document.addEventListener('DOMContentLoaded', start, { once: true }); }
+    })();
+    </script>
+    <script>
+    (function() {
+        if (window.self === window.top) return;
+        function postUnsupported(reason) {
+            window.parent.postMessage({
+                type: 'IFRAME_FIRST_CONTENTFUL_PAINT_UNSUPPORTED',
+                payload: { reason: reason, userAgent: navigator.userAgent }
+            }, '*');
+        }
+        if (typeof PerformanceObserver === 'undefined') {
+            postUnsupported('no_performance_observer');
+            return;
+        }
+        try {
+            var obs = new PerformanceObserver(function(list) {
+                var entries = list.getEntries();
+                for (var i = 0; i < entries.length; i++) {
+                    if (entries[i].name === 'first-contentful-paint') {
+                        obs.disconnect();
+                        window.parent.postMessage({ type: 'IFRAME_FIRST_CONTENTFUL_PAINT' }, '*');
+                        return;
+                    }
+                }
+            });
+            obs.observe({ type: 'paint', buffered: true });
+        } catch (e) {
+            postUnsupported('observe_threw:' + (e && e.name ? e.name : 'Error'));
+        }
+    })();
+    </script>
+    <script>
+    (function() {
+        if (window.self === window.top) return;
+        var lastUrl = window.location.href;
+        function notify() {
+            var url = window.location.href;
+            if (url === lastUrl) return;
+            lastUrl = url;
+            window.parent.postMessage({ type: 'APP_CHANGED_URL', url: url }, '*');
+        }
+        var origPush = history.pushState.bind(history);
+        history.pushState = function() { origPush.apply(history, arguments); notify(); };
+        var origReplace = history.replaceState.bind(history);
+        history.replaceState = function() { origReplace.apply(history, arguments); notify(); };
+        window.addEventListener('popstate', notify);
+        window.parent.postMessage({ type: 'APP_CHANGED_URL', url: window.location.href }, '*');
+    })();
+    </script>
+    
+    <link rel="icon" type="image/svg+xml" href="https://base44.com/logo_v2.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F0F10">
+    <meta name="description" content="מנעולן תל אביב - שירות חירום 24/7 בפלורנטין 61. פריצת מבנים, התקנת מנעולים וצילינדרים, מנעולים חכמים ושינוי קומבינציה. הגעה מהירה מעכשיו לעכשיו, מחירים הוגנים, דירוג 5.0 ב-Google. חייגו עכשיו 054-775-7378.">
+    <meta property="og:title" content="מנעולן תל אביב | שירות חירום 24/7 - פלורנטין 61">
+    <meta property="og:description" content="פריצה, התקנת מנעולים, מנעולים חכמים ושינוי קומבינציה. הגעה מהירה, מחירים הוגנים, דירוג 5.0 ב-Google. חייגו 054-775-7378.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="./css2" rel="stylesheet">
+    <title>מנעולן תל אביב | שירות חירום 24/7 - פלורנטיב 61 | 054-775-7378</title>
+    <script type="module" crossorigin="" src="./index-vJsiviws.js.הורדה"></script>
+    <link rel="stylesheet" crossorigin="" href="./index-BtpIVVCM.css">
+    <script type="module">
+if (window.self === window.top) {
+  let lastPath = "";
+  function getPageNameFromPath(path) {
+    const segments = path.split("/").filter(Boolean);
+    return segments[0] || null;
+  }
+  function trackPageView() {
+    const path = window.location.pathname;
+    if (path === lastPath) return;
+    lastPath = path;
+    const pageName = getPageNameFromPath(path) || "home";
+    const appId = "6ab97028773b74bb6cc7f75d";
+    if (!appId) return;
+    fetch(`/api/app-logs/${appId}/log-user-in-app/${pageName}`, {
+      method: "POST",
+    }).catch(() => {});
+  }
+  const originalPushState = history.pushState.bind(history);
+  history.pushState = function (...args) {
+    originalPushState(...args);
+    trackPageView();
+  };
+  const originalReplaceState = history.replaceState.bind(history);
+  history.replaceState = function (...args) {
+    originalReplaceState(...args);
+    trackPageView();
+  };
+  window.addEventListener("popstate", trackPageView);
+  trackPageView();
+}
+</script>
+  <script src="./datadog-rum.js.הורדה"></script><script src="./datadog-logs.js.הורדה"></script></head>
+  <body>
+    <div id="root"><main class="min-h-screen bg-obsidian"><section class="relative overflow-hidden bg-obsidian"><div class="absolute inset-0 bg-[radial-gradient(circle_at_75%_15%,rgba(255,184,0,0.06),transparent_55%)]"></div><div class="pointer-events-none absolute inset-x-0 top-0 h-px overflow-hidden"><div class="animate-scan h-px w-full bg-amber/40"></div></div><div class="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:py-28"><div style="opacity: 1; transform: none;"><div class="mb-6"><span class="font-mono text-xs uppercase tracking-[0.2em] text-aluminum sm:text-sm">מנעולן תל אביב · מוקד פלורנטין · 24/7</span></div><h1 class="font-display text-5xl leading-[0.95] text-white sm:text-6xl lg:text-7xl">מנעולן תל אביב<span class="mt-2 block text-amber">שירות חירום · מעכשיו לעכשיו</span></h1><p class="mt-6 max-w-xl text-balance text-lg leading-relaxed text-aluminum sm:text-xl">פריצת מבנים, התקנת מנעולים וצילינדרים, מנעולים חכמים ושינוי קומבינציה — בכל רחבי תל אביב-יפו והסביבה. הגעה מהירה, מחירים הוגנים, אמינות ללא פשרות.</p><div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-aluminum sm:text-base"><span class="inline-flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock h-4 w-4 text-amber"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> זמינות 24/7</span><span class="inline-flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check h-4 w-4 text-amber"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg> מחירים הוגנים</span><span class="inline-flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg> דירוג 5.0 ב-Google</span></div><div class="mt-10"><a href="tel:+972547757378" aria-label="חייגו עכשיו 054-775-7378" class="animate-breathe inline-flex h-16 min-h-16 items-center gap-3 rounded-md bg-amber px-8 font-heading text-lg font-extrabold tracking-tight text-amber-foreground sm:h-[68px] sm:px-10 sm:text-xl"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone h-6 w-6 shrink-0"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><span>חייגו עכשיו · 054-775-7378</span></a></div></div><div class="relative" style="opacity: 1; transform: none;"><div class="overflow-hidden rounded-md border border-steel bg-gunmetal"><img src="./photo-1563845104292-41c1b4825255" alt="מנעולן מבצע עבודת מנעולים — ידית דלת עם מפתח" class="aspect-[4/3] w-full object-cover"></div><div class="absolute -bottom-4 -left-4 hidden rounded-md border border-amber bg-obsidian px-5 py-3 sm:block"><p class="font-display text-2xl text-amber">24/7</p><p class="font-mono text-[10px] uppercase tracking-[0.2em] text-aluminum">שירות חירום</p></div></div></div></section><section id="services" class="bg-obsidian py-20 sm:py-28"><div class="mx-auto max-w-6xl px-5 sm:px-8"><div class="mb-12 max-w-2xl" style="opacity: 1; transform: none;"><p class="font-mono text-xs uppercase tracking-[0.25em] text-amber">02 · שירותים</p><h2 class="mt-3 font-display text-4xl leading-tight text-white sm:text-5xl">אנטומיית שירות<span class="block text-aluminum">מעבר לפתיחת דלתות</span></h2><p class="mt-4 text-lg leading-relaxed text-aluminum">ארבעה שירותי ליבה, מבוצעים במקצועיות ובאמינות ללא פשרות.</p></div><div class="grid grid-cols-1 gap-px overflow-hidden rounded-md border border-steel bg-steel sm:grid-cols-2" style="opacity: 1; transform: none;"><div class="bg-gunmetal p-6 sm:p-8"><div class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building h-5 w-5 text-amber"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg><h3 class="font-heading text-lg font-bold text-white sm:text-xl">פריצת מבנים ובתים</h3></div><p class="mt-3 text-base leading-relaxed text-aluminum">שירות חירום מהיר לפריצת דלתות ומבנים נעולים, ללא נזק ובמקצועיות.</p></div><div class="bg-gunmetal p-6 sm:p-8"><div class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-door-closed h-5 w-5 text-amber"><path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14"></path><path d="M2 20h20"></path><path d="M14 12v.01"></path></svg><h3 class="font-heading text-lg font-bold text-white sm:text-xl">התקנת מנעולים, צילינדרים וציוד דלתות</h3></div><p class="mt-3 text-base leading-relaxed text-aluminum">התקנה מקצועית של מנעולים, צילינדרים, בריחים וציוד דלתות איכותי.</p></div><div class="bg-gunmetal p-6 sm:p-8"><div class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fingerprint h-5 w-5 text-amber"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"></path><path d="M14 13.12c0 2.38 0 6.38-1 8.88"></path><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"></path><path d="M2 12a10 10 0 0 1 18-6"></path><path d="M2 16h.01"></path><path d="M21.8 16c.2-2 .131-5.354 0-6"></path><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"></path><path d="M8.65 22c.21-.66.45-1.32.57-2"></path><path d="M9 6.8a6 6 0 0 1 9 5.2v2"></path></svg><h3 class="font-heading text-lg font-bold text-white sm:text-xl">התקנת מנעולים אלקטרוניים וחכמים</h3></div><p class="mt-3 text-base leading-relaxed text-aluminum">התקנה ותכנות של מנעולים חכמים, אלקטרוניים ומערכות כניסה מתקדמות.</p></div><div class="bg-gunmetal p-6 sm:p-8"><div class="flex items-center gap-2.5"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key-round h-5 w-5 text-amber"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle></svg><h3 class="font-heading text-lg font-bold text-white sm:text-xl">החלפת והתאמת מפתחות · שינוי קומבינציה</h3></div><p class="mt-3 text-base leading-relaxed text-aluminum">שינוי קומבינציה במנעול, התאמת מפתחות חדשים וביטול מפתחות ישנים.</p></div></div></div></section><section id="reviews" class="relative bg-gunmetal py-20 sm:py-28"><div class="mx-auto max-w-6xl px-5 sm:px-8"><div class="mb-12 flex flex-col items-start gap-6 sm:flex-row sm:items-end sm:justify-between" style="opacity: 1; transform: none;"><div class="max-w-2xl"><p class="font-mono text-xs uppercase tracking-[0.25em] text-amber">03 · הוכחה חברתית</p><h2 class="mt-3 font-display text-4xl leading-tight text-white sm:text-5xl">כספת ההוכחה · 5.0</h2><p class="mt-4 text-lg leading-relaxed text-aluminum">דירוג מושלם של 5.0 כוכבים ב-Google, על בסיס ביקורות מאומתות של לקוחות אמיתיים.</p></div><div class="flex items-center gap-4 rounded-md border border-steel bg-obsidian px-6 py-4"><div class="text-5xl font-extrabold text-amber">5.0</div><div><div class="flex gap-0.5" aria-label="דירוג 5 מתוך 5 כוכבים"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg></div><p class="mt-1 font-mono text-xs tracking-wide text-aluminum">Google Reviews</p></div></div></div><div class="grid grid-cols-1 gap-px overflow-hidden rounded-md border border-steel bg-steel sm:grid-cols-2" style="opacity: 1; transform: none;"><figure class="bg-gunmetal p-6 sm:p-8"><div class="flex gap-0.5" aria-label="דירוג 5 מתוך 5 כוכבים"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg></div><blockquote class="mt-4 text-lg leading-relaxed text-white">“התקשרתי אליו בשעה 4:00 בבוקר, הוא בא, לקח מחיר זול של יום. מומלץ! מנעולן זול, אמין ומקצוען.”</blockquote><figcaption class="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-aluminum">— לקוח מאומת</figcaption></figure><figure class="bg-gunmetal p-6 sm:p-8"><div class="flex gap-0.5" aria-label="דירוג 5 מתוך 5 כוכבים"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg></div><blockquote class="mt-4 text-lg leading-relaxed text-white">“בעל מקצוע בחסד עליון, מקצוען אלוף! סידר לי את הבעיה אחרי שהיו פה כמה ולא הצליחו לפתור.”</blockquote><figcaption class="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-aluminum">— לקוח מאומת</figcaption></figure><figure class="bg-gunmetal p-6 sm:p-8"><div class="flex gap-0.5" aria-label="דירוג 5 מתוך 5 כוכבים"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg></div><blockquote class="mt-4 text-lg leading-relaxed text-white">“הגיע למקרה חירום מעכשיו לעכשיו! ממליצה בחום.”</blockquote><figcaption class="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-aluminum">— לקוחה מאומתת</figcaption></figure><figure class="bg-gunmetal p-6 sm:p-8"><div class="flex gap-0.5" aria-label="דירוג 5 מתוך 5 כוכבים"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 text-amber fill-amber"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg></div><blockquote class="mt-4 text-lg leading-relaxed text-white">“שירות מעולה! מקצוען, אדיב ויעיל במיוחד. ממליץ בחום!”</blockquote><figcaption class="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-aluminum">— לקוח מאומת</figcaption></figure></div></div></section><section id="gallery" class="bg-gunmetal py-20 sm:py-28"><div class="mx-auto max-w-6xl px-5 sm:px-8"><div class="mb-12 max-w-2xl" style="opacity: 1; transform: none;"><p class="font-mono text-xs uppercase tracking-[0.25em] text-amber">05 · גלריה</p><h2 class="mt-3 font-display text-4xl leading-tight text-white sm:text-5xl">העבודה שלנו<span class="block text-aluminum">בשטח · תמונות אמיתיות</span></h2><p class="mt-4 text-lg leading-relaxed text-aluminum">צילומים מעבודות מנעולנות בפועל — פריצות, התקנות, החלפות ומנעולים חכמים.</p></div><div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4" style="opacity: 1; transform: none;"><button type="button" class="group relative overflow-hidden rounded-md border border-steel bg-obsidian focus:outline-none focus:ring-2 focus:ring-amber"><div class="aspect-square w-full"><img src="./photo-1563845104292-41c1b4825255" alt="התקנת ידית דלת" class="h-full w-full transition-transform duration-300 group-hover:scale-105"></div><div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian/95 to-transparent p-3"><p class="truncate text-right text-sm font-bold text-white sm:text-base">התקנת ידית דלת</p></div></button><button type="button" class="group relative overflow-hidden rounded-md border border-steel bg-obsidian focus:outline-none focus:ring-2 focus:ring-amber"><div class="aspect-square w-full"><img src="./photo-1721544364147-bde956e843ce" alt="התאמת מפתחות" class="h-full w-full transition-transform duration-300 group-hover:scale-105"></div><div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian/95 to-transparent p-3"><p class="truncate text-right text-sm font-bold text-white sm:text-base">התאמת מפתחות</p></div></button><button type="button" class="group relative overflow-hidden rounded-md border border-steel bg-obsidian focus:outline-none focus:ring-2 focus:ring-amber"><div class="aspect-square w-full"><img src="./photo-1592744254966-58c65cfd2e69" alt="מנעול שילוב אבטחה" class="h-full w-full transition-transform duration-300 group-hover:scale-105"></div><div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian/95 to-transparent p-3"><p class="truncate text-right text-sm font-bold text-white sm:text-base">מנעול שילוב אבטחה</p></div></button><button type="button" class="group relative overflow-hidden rounded-md border border-steel bg-obsidian focus:outline-none focus:ring-2 focus:ring-amber"><div class="aspect-square w-full"><img src="./photo-1531417666976-ed2bdbeb043b" alt="פריצת פרפות" class="h-full w-full transition-transform duration-300 group-hover:scale-105"></div><div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian/95 to-transparent p-3"><p class="truncate text-right text-sm font-bold text-white sm:text-base">פריצת פרפות</p></div></button><button type="button" class="group relative overflow-hidden rounded-md border border-steel bg-obsidian focus:outline-none focus:ring-2 focus:ring-amber"><div class="aspect-square w-full"><img src="./photo-1635237393049-55046279ebb8" alt="החלפת מפתחות" class="h-full w-full transition-transform duration-300 group-hover:scale-105"></div><div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian/95 to-transparent p-3"><p class="truncate text-right text-sm font-bold text-white sm:text-base">החלפת מפתחות</p></div></button><button type="button" class="group relative overflow-hidden rounded-md border border-steel bg-obsidian focus:outline-none focus:ring-2 focus:ring-amber"><div class="aspect-square w-full"><img src="./photo-1756341782434-3020b9d17372" alt="מגוון מפתחות" class="h-full w-full transition-transform duration-300 group-hover:scale-105"></div><div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-obsidian/95 to-transparent p-3"><p class="truncate text-right text-sm font-bold text-white sm:text-base">מגוון מפתחות</p></div></button></div></div></section><footer class="bg-obsidian pt-20 sm:pt-28"><div class="mx-auto max-w-6xl px-5 sm:px-8"><div class="mb-12 max-w-2xl" style="opacity: 1; transform: none;"><p class="font-mono text-xs uppercase tracking-[0.25em] text-amber">04 · מיקום</p><h2 class="mt-3 font-display text-4xl leading-tight text-white sm:text-5xl">מוקד הפיקוד<span class="block text-aluminum">פלורנטין 61, תל אביב-יפו</span></h2><p class="mt-4 text-lg leading-relaxed text-aluminum">אזור שירות: תל אביב-יפו והסביבה. זמינות מיידית למקרי חירום מעכשיו לעכשיו.</p></div><address class="not-italic"><div class="grid grid-cols-1 gap-px overflow-hidden rounded-md border border-steel bg-steel sm:grid-cols-2" style="opacity: 1; transform: none;"><div class="bg-gunmetal p-6 sm:p-8"><div class="flex items-center gap-2 text-amber"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin h-5 w-5"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg><span class="font-mono text-xs uppercase tracking-[0.2em]">כתובת</span></div><p class="mt-3 text-xl font-bold text-white">פלורנטין 61</p><p class="text-lg text-aluminum">תל אביב-יפו</p><div class="mt-6 flex items-center gap-2 text-amber"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock h-5 w-5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span class="font-mono text-xs uppercase tracking-[0.2em]">שעות פעילות</span></div><p class="mt-3 text-xl font-bold text-white">פתוח 24/7</p><p class="text-lg text-aluminum">7 ימים בשבוע · זמינות מיידית</p><div class="mt-6 flex items-center gap-2 text-amber"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone h-5 w-5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><span class="font-mono text-xs uppercase tracking-[0.2em]">טלפון</span></div><a href="tel:+972547757378" class="mt-3 block text-xl font-bold text-white hover:text-amber">054-775-7378</a></div><div class="flex flex-col justify-center gap-4 bg-gunmetal p-6 sm:p-8"><a href="https://waze.com/ul?q=%D7%A4%D7%9C%D7%95%D7%A8%D7%A0%D7%98%D7%99%D7%9F%2061%20%D7%AA%D7%9C%20%D7%90%D7%91%D7%99%D7%91" target="_blank" rel="noopener noreferrer" class="flex h-16 min-h-16 items-center justify-center gap-3 rounded-md bg-amber font-heading text-lg font-extrabold text-amber-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-navigation h-5 w-5"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>ניווט ב-Waze</a><a href="https://wa.me/972547757378" target="_blank" rel="noopener noreferrer" class="flex h-16 min-h-16 items-center justify-center gap-3 rounded-md border border-steel bg-obsidian font-heading text-lg font-extrabold text-white hover:border-amber"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle h-5 w-5 text-amber"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>שלחו תמונת מנעול ב-WhatsApp</a><a href="tel:+972547757378" class="flex h-16 min-h-16 items-center justify-center gap-3 rounded-md border border-steel bg-obsidian font-heading text-lg font-extrabold text-white hover:border-amber"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone h-5 w-5 text-amber"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>חייגו 054-775-7378</a></div></div></address><div class="mt-16 border-t border-steel py-8 text-center" style="opacity: 1; transform: none;"><p class="font-display text-2xl tracking-wide text-white">מנעולן תל אביב</p><p class="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-aluminum">אמינות · מקצועיות · מחירים הוגנים · 24/7</p><nav class="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-aluminum"><a class="hover:text-amber" href="https://preview--tlv-lock-hero.base44.app/privacy">מדיניות פרטיות</a><span class="text-steel">·</span><a class="hover:text-amber" href="https://preview--tlv-lock-hero.base44.app/terms">תנאי שימוש</a><span class="text-steel">·</span><a class="hover:text-amber" href="https://preview--tlv-lock-hero.base44.app/admin">אזור ניהול</a></nav><p class="mt-4 text-sm text-steel">© 2026 מנעולן תל אביב. כל הזכויות שמורות.</p></div></div></footer><a href="tel:+972547757378" aria-label="חייגו עכשיו 054-775-7378" class="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 sm:left-5 sm:right-auto sm:translate-x-0"><span class="animate-breathe flex h-14 min-h-14 items-center gap-3 rounded-full bg-amber px-6 font-heading text-base font-extrabold text-amber-foreground shadow-lg sm:h-16 sm:px-8 sm:text-lg"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone h-5 w-5 shrink-0 sm:h-6 sm:w-6"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><span class="whitespace-nowrap tracking-tight">חייגו עכשיו · 054-775-7378</span></span></a></main><div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events: none;"><ol tabindex="-1" class="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"></ol></div></div>
+  
+
+</body></html>
